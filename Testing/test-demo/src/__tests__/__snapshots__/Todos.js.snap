@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Todo - should create snapshot 1`] = `
+Array [
+  <h3
+    className=""
+    data-testid="item"
+>
+    item1
+</h3>,
+  <div>
+    an item
+</div>,
+  <button
+    onClick={[Function]}
+>
+    Select
+</button>,
+  <h3
+    className=""
+    data-testid="item"
+>
+    item2
+</h3>,
+  <div>
+    another item
+</div>,
+  <button
+    onClick={[Function]}
+>
+    Select
+</button>,
+]
+`;
