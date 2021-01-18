@@ -50,6 +50,11 @@ This is a completely free book on React.js
 
 Why did I write it?  Knowledge deserves to be free. Note, things changes fast, and I would love to have your help keeping it up to date.
 
+If you need to learn HTML, CSS and JavaScript, I've co authored this repo on web fundamentals.
+
+[Web dev for beginners](https://github.com/microsoft/Web-Dev-For-Beginners)
+
+
 ## Contributions
 
 Contributions are very welcome.
