@@ -20,6 +20,8 @@
 - [Routing](./4-routing)
    - [Routing](./4-routing/routing.md)
    - [Router and query parameters](./4-routing/params.md)
+   - [Programmatic navigation](./4-routing/programmatic-navigation.md)
+   - [Lazy loading](./4-routing/lazy-loading.md)
 - [Advanced](./5-advanced)
    - [Context API](./5-advanced/context-api.md)
    - [Hooks](./5-advanced/hooks.md)
