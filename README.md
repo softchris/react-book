@@ -6,15 +6,17 @@ Why did I write it?  Knowledge deserves to be free. Note, things changes fast, a
 
 Hope the book helps you in your career.
 
-## Need to brush up on Web Dev basics
+## Need to brush up on Web Dev basics?
 
-I know we sometimes have a tendency to learn a framework. It's fine, no shame. But if you need to brush up on your Web Dev basics then this repo takes you from th very beginning to some decently advanced projects on HTML, CSS and JavaScript, I've co authored this repo on web fundamentals.
+I know we sometimes have a tendency to learn a framework before we know the basics of a language. It's fine, no shame. But if you need to brush up on your Web Dev basics then this repo takes you from th very beginning to some decently advanced projects on HTML, CSS and JavaScript
+
+I've co authored this repo on web fundamentals.
 
 Check it out 👉 [Web dev for beginners](https://github.com/microsoft/Web-Dev-For-Beginners)
 
 ## Contact
 
-I'm easiest to find on.
+I'm easiest to find on Twitter.
 
 👉 [Chris Noring](https://twitter.com/chris_noring)
 
