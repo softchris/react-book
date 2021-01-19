@@ -1,8 +1,25 @@
 # React Book, your beginner guide to React
 
+This is a completely free book on React.js
+
+Why did I write it?  Knowledge deserves to be free. Note, things changes fast, and I would love to have your help keeping it up to date.
+
+Hope the book helps you in your career.
+
+## Need to brush up on Web Dev basics
+
+I know we sometimes have a tendency to learn a framework. It's fine, no shame. But if you need to brush up on your Web Dev basics then this repo takes you from th very beginning to some decently advanced projects on HTML, CSS and JavaScript, I've co authored this repo on web fundamentals.
+
+Check it out 👉 [Web dev for beginners](https://github.com/microsoft/Web-Dev-For-Beginners)
+
+## Contact
+
+I'm easiest to find on 
+
+👉 [Chris Noring](https://twitter.com/chris_noring)
+
 ## Table of Contents
 
-- [About](#about)
 - [Contributions](#contributions)
 - [Translations](#translations)
 - [GitHub Pages](#github-pages)
@@ -49,23 +66,18 @@
    - [Formik part I](./9-forms/formik-partI.md)
    - [Formik part II](./9-forms/formik-partII.md)
 
-## About
-
-This is a completely free book on React.js
-
-Why did I write it?  Knowledge deserves to be free. Note, things changes fast, and I would love to have your help keeping it up to date.
-
-If you need to learn HTML, CSS and JavaScript, I've co authored this repo on web fundamentals.
-
-[Web dev for beginners](https://github.com/microsoft/Web-Dev-For-Beginners)
-
 ## Contributions
 
-Contributions are very welcome.
+Contributions are very welcome. Please raise an issue of you see something or a PR.
 
-Hope the book helps you in your career.
+I welcome contributions on:
 
-Chris , [Twitter](https://twitter.com/chris_noring)
+- Suggestions on topics to cover
+- Correctness issues
+- Spelling
+- Suggestions on better formatting
+
+I hope I hear from you. :)
 
 ## Translations
 
@@ -73,12 +85,12 @@ This book now supports Docsify and really welcomes translations. Check out [Tran
 
 ## GitHub Pages
 
-This book an also be read on GH Pages
+This book can also be read on GH Pages
 
 > https://softchris.github.io/react-book/
 
 ## Links
 
-- [Publish a React App to Azure](https://docs.microsoft.com/en-us/learn/modules/publish-app-service-static-web-app-api/?WT.mc_id=academic-0000-chnoring) This module takes you through using the so called Azure Static Web Apps service, you can select the path that fits your framework, i.e React, Angular, Vue or Svelte.
+- 👉 [Publish a React App to Azure](https://docs.microsoft.com/en-us/learn/modules/publish-app-service-static-web-app-api/?WT.mc_id=academic-0000-chnoring) This module takes you through using the so called Azure Static Web Apps service, you can select the path that fits your framework, i.e React, Angular, Vue or Svelte.
 
-- [Node.js 5 modules](https://docs.microsoft.com/en-us/learn/paths/build-javascript-applications-nodejs/?WT.mc_id=academic-0000-chnoring) You're going to need a backend API sooner or later. Node.js is good choice for backend and there are many frameworks that will help you build an API like Express, Koa, Nest, Fastify etc.
+- 👉 [Node.js 5 modules](https://docs.microsoft.com/en-us/learn/paths/build-javascript-applications-nodejs/?WT.mc_id=academic-0000-chnoring) You're going to need a backend API sooner or later. Node.js is good choice for backend and there are many frameworks that will help you build an API like Express, Koa, Nest, Fastify etc.
