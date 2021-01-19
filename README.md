@@ -56,7 +56,6 @@ If you need to learn HTML, CSS and JavaScript, I've co authored this repo on web
 
 [Web dev for beginners](https://github.com/microsoft/Web-Dev-For-Beginners)
 
-
 ## Contributions
 
 Contributions are very welcome.
@@ -64,4 +63,15 @@ Contributions are very welcome.
 Hope the book helps you in your career.
 
 Chris , [Twitter](https://twitter.com/chris_noring)
+
+## Translations
+
+This book now supports Docsify and really welcomes translations. Check out [Translations.md](./TRANSLATIONS.md)
+
+## GitHub Pages
+
+This book an also be read oon GH Pages
+
+> https://softchris.github.io/react-book/
+
 
