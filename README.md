@@ -1,4 +1,4 @@
-# React Ultimate, your beginner guide to React
+# React Book, your beginner guide to React
 
 ## Table of Contents
 
