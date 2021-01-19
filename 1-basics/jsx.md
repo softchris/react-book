@@ -1,15 +1,15 @@
 # JSX
 
-Follow me on [Twitter](https://twitter.com/chris_noring), happy to take your suggestions on topics or improvements /Chris
+> Follow me on [Twitter](https://twitter.com/chris_noring), happy to take your suggestions on topics or improvements /Chris
 
-This chapter covers:
+This chapter covers the following topics:
 
-- **What** is JSX
-- **Why** use it
+- **What is JSX**. JSX is somthing you us all the time in React. Lets explain what it is.
+- **Why use it**. You can opt out of using JSX but almost no one does, and it does make your life simpler.
 
 ## What & Why
 
-JSX is pretty much you writing XML in JavaScript. It's a preprocessor step. You don't have to have it but it makes life a whole lot easier.
+JSX is pretty much you writing XML in JavaScript. It's a _pre processor_ step. You don't have to have it, but it makes life a whole lot easier.
 
 ### Simple example
 
@@ -24,13 +24,21 @@ const Elem = <h1>Some title</h1>;
 </div>
 ```
 
-The above looks like XML in JavaScript. When it is being processed it is turned into the following ES5 code:
+The above declaration of `Elem` looks like XML in JavaScript. So what happens? When it is being processed, it is turned into the following ES5 code:
 
 ```js
 React.createElement('Elem', null, 'Some title');
 ```
 
-Ok so `Elem` becomes the element name, the second argument that above is null are our element attributes, which we don't have any. The third and last argument is the elements value. Let's look at an example below where we give it a property:
+Ok so calling `createElement`, here are the parameters:
+
+- **First parameter, element name**.`Elem` becomes the element name.
+- **Second parameter, attributes**. the second argument above is `null` and represents our element attributes, which we don't have any.
+- **Third parameter, element value**. The third and last argument is the elements value.
+
+#### With attribute example
+
+Let's look at an example below where we give it an attribute:
 
 ```js
 const Elem = <h1>Some title</h1>;
@@ -57,7 +65,9 @@ Above we can see that our attribute `title` is now part of the second argument.
 
 ### Multiline
 
-Most of the time you will define JSX over several different rows and starting out new it might stump you why it doesn't work. You simply need to wrap it in a parenthesis, like so:
+Most of the time, you will define JSX over several different rows and starting out new, it might stump you why it doesn't work.
+
+The solution is to wrap multiple elements in a parenthesis `()`, like so:
 
 ```jsx
 const Elem =
@@ -71,10 +81,10 @@ const Elem =
 
 ### One parent
 
-JSX needs to have one parent. The following would be incorrect:
+JSX needs to have one parent. The following would be **incorrect**:
 
 ```html
-// would be incorrect, no parent element
+<!-- would be incorrect, no parent element -->
 const Elem =
 (
   <h1>Some title</h1>
@@ -82,35 +92,37 @@ const Elem =
 )
 ```
 
-We can fix this by either wrapping the in div element like so:
+You can fix this by either:
 
-```html
-const Elem =
-(
-  <div>
-    <h1>Some title</h1>
-    <div>Some content</div>
-  </div>
-)
-```
+- **Wrapping it in an element**. You can wrap your content in a div element like so:
 
-or we can wrap it in a React.Fragment, like so:
+   ```html
+    const Elem =
+    (
+      <div>
+        <h1>Some title</h1>
+        <div>Some content</div>
+      </div>
+    )
+    ```
 
-```html
-const Elem = (
-<React.Fragment>
-  <h1>Some title</h1>
-  <div>Some content</div>
-</React.Fragment>
-)
-```
+- **Use `React.Fragment`**. You can wrap it in a `React.Fragment`, like so:
 
-React.Fragment would be the parent element needed instead of us using a div element just to make JSX happy.
+    ```html
+    const Elem = (
+    <React.Fragment>
+      <h1>Some title</h1>
+      <div>Some content</div>
+    </React.Fragment>
+    )
+    ```
+
+`React.Fragment` would be the parent element  instead of us using a `div`.
 
 ## Summary
 
-This is pretty much all we need to know on JSX to be able to work with it:
+This is pretty much all we need to know on the topic of JSX to be able to work with it:
 
-* It's like XML that gets translated to `React.createElement()` calls
-* Multiline needs parenthesis to work
-* We need to have a parent element, React.Fragment is good option for that
+- It's like XML that gets translated to `React.createElement()` calls.
+- Multiline needs parenthesis to work.
+- You need to have one parent element, `React.Fragment` is good option for that.
