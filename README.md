@@ -35,7 +35,7 @@
    - [Actions](./7-redux/actions.md)
    - [Reducers](./7-redux/reducers.md)
    - [Store](./7-redux/store.md)
-   - [Adding Redux to React](./7-redux/adding-redux-redux.md)
+   - [Adding Redux to React](./7-redux/adding-redux-to-react.md)
    - [Sagas, side effects](./7-redux/sagas.md)
    - [Redux form](./7-redux/redux-form.md) 
 - [Tools](./8-tools)
