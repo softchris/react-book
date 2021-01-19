@@ -14,7 +14,7 @@ Check it out 👉 [Web dev for beginners](https://github.com/microsoft/Web-Dev-F
 
 ## Contact
 
-I'm easiest to find on 
+I'm easiest to find on.
 
 👉 [Chris Noring](https://twitter.com/chris_noring)
 
@@ -24,6 +24,8 @@ I'm easiest to find on
 - [Translations](#translations)
 - [GitHub Pages](#github-pages)
 - [Links](#links)
+
+The book 
 - [Basics](./1-basics)
    - [JSX](./1-basics/jsx.md)
    - [Setup](./1-basics/setup.md)
