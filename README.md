@@ -4,6 +4,9 @@
 
 - [About](#about)
 - [Contributions](#contributions)
+- [Translations](#translations)
+- [GitHub Pages](github_pages)
+- [Links](#links)
 - [Basics](./1-basics)
    - [JSX](./1-basics/jsx.md)
    - [Setup](./1-basics/setup.md)
