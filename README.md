@@ -70,8 +70,12 @@ This book now supports Docsify and really welcomes translations. Check out [Tran
 
 ## GitHub Pages
 
-This book an also be read oon GH Pages
+This book an also be read on GH Pages
 
 > https://softchris.github.io/react-book/
 
+## Links
 
+- [Publish a React App to Azure](https://docs.microsoft.com/en-us/learn/modules/publish-app-service-static-web-app-api/?WT.mc_id=academic-0000-chnoring) This module takes you through using the so called Azure Static Web Apps service, you can select the path that fits your framework, i.e React, Angular, Vue or Svelte.
+
+- [Node.js 5 modules](https://docs.microsoft.com/en-us/learn/paths/build-javascript-applications-nodejs/?WT.mc_id=academic-0000-chnoring) You're going to need a backend API sooner or later. Node.js is good choice for backend and there are many frameworks that will help you build an API like Express, Koa, Nest, Fastify etc.
