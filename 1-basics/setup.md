@@ -314,7 +314,7 @@ Everything is setup at this point, you just need to add React to it.
    npm start
    ```
 
-1. Open up a browser and navigate to **http://localhost:8008**. You should see the following text:
+1. Open up a browser and navigate to **http://localhost:8080**. You should see the following text:
 
    ```output
    Your React app
@@ -368,7 +368,7 @@ Everything is setup at this point, you just need to add React to it.
    const title = 'Your awesome React app';
    ```
 
-   Once you save it, note how the bundles are rebuilt in the console. Head back to **http://localhost:8000**. The browser should now be saying **Your awesome React app**.
+   Once you save it, note how the bundles are rebuilt in the console. Head back to **http://localhost:8080**. The browser should now be saying **Your awesome React app**.
 
 ## Solution
 
