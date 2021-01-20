@@ -2,101 +2,130 @@
 
 Follow me on [Twitter](https://twitter.com/chris_noring), happy to take your suggestions on topics or improvements /Chris
 
-There are many ways to create a component but let's have a look at how you can create a so called class based component.
+The most used ways to create a component are:
+
+- **Class based**. A class based component is made up of a class that inherits from `React.Component`.
+
+- **Function based**. Function based component consists of nothing but a function that needs to return JSX.
+
+## What component type to choose
+
+Which type of component do I choose, class based or function based?  
+
+The reason for using a class based component is that you want to use state, function based components used to only be able to render data, not change it. However, since [hooks](../5-advanced/hooks.md) were added you now use function based all the time, so that's my recommendation.
+
+Let's show both types however, if you maintain an older code base, it might not make sense to mix styles and rather stick with the chosen approach.
+
+## Exercise - create a component
 
 We will do the following:
-- **Define** the component, this will involve us inheriting from `React.Component` and define the method `render()`
-- **Use** the component in our app.
 
- We use JSX to define it and assign it to a variable. Thereafter we are free to use it in our markup. To create our component we need the following:
+- **Define the component**, this will involve us inheriting from `React.Component` and define the method `render()`.
 
-## Define the component
+- **Use the component in our app**. You will see how you can add the component to your app.
 
-Let's begin by creating a Jedi component:
+### -1- Define the component
 
-```js
-class Jedi extends React.Component {
-  render() {
-    return (
-      <div>I am a Jedi Component</div>
-    );
-  }
-}
-```
+1. Create a new project by running the command `git clone`:
 
-Above we are defining the class `Jedi` and have it inherit from  `React.Component`. Thereafter we define the method `render()` that defines what our component will output. We return a JSX statement as output.
+   ```bash
+   git clone https://github.com/softchris/react-starter-project my-first-app
+   cd my-first-app
+   ```
 
-## Use component
+   This starter project is based on the tutorial in [Setup with Webpack](./setup.md).
 
-Now that we have our component we can easily it as we would any HTML element like below `<Jedi />`:
+1. Run `npm install` to install all dependencies:
 
-```html
-<div>
-  <Jedi />
-</div>
-```
+    ```bash
+    npm install
+    ```
 
-## Create a React application
+1. In the _src_ directory, add a file `Jedi.js` and give it the following content:
 
-> Ok, great I know how to create a Component but how do I actually create a React app? 
+   ```javascript
+    import React from 'react';
 
-That's a fair comment. 
+    class Jedi extends React.Component {
+      render() {
+        return (
+          <div>I am a Jedi Component</div>
+        );
+      }
+    }
+    
+    export default Jedi;
+   ```
 
-To create a React app we will opt to use the `script` version of creating a React project. This involves creating thee following files:
+   Above we are defining the class `Jedi` and have it inherit from  `React.Component`. Thereafter we define the method `render()` that defines what our component will output. We return a JSX statement as output.
 
-- **index.html**, this will contain the script tags pointing to the needed React libraries but also a mount point for our app.
-- **app.js**, this will contain the application definition
+### -2- Use component
 
-### Create `index.html`
+Now that we have our component we can easily use it.
 
-```html
-<!-- index.html ->
+1. Open the file _index.js_ and add the following row at the top:
 
-<html>
-  <body>
-  <!-- This is where our app will live -->
-    <div id="app"></div>
+   ```javascript
+   import Jedi from './Jedi';
+   ```
 
-    <!-- These are script tags we need for React, JSX and ES2015 features -->
-    <script src="https://fb.me/react-15.0.0.js"></script>
-    <script src="https://fb.me/react-dom-15.0.0.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
-    <script type="text/babel" src="app.js"></script>
-  </body>
+1. Locate the part of the code that says `ReactDOM.render` and change it to look like so:
 
-</html>
-```
-
-Above we create the mount point `<div id="app"></div>`, this is where our app will be rendered.
-
-### Create `app.js`
-
-`app.js` looks like the following:
-
-```js
-class Jedi extends React.Component {
-  render() {
-    return (
-      <div>I am a Jedi Component</div>
-    );
-  }
-}
-
-class Application extends React.Component {
-  render() {
-    return (
+   ```javascript
+   ReactDOM.render(
       <div>
         <Jedi />
-      </div>
+      </div>,
+      document.getElementById('app')
     );
-  }
-}
+   ```
 
-ReactDOM.render(<Application />, document.getElementById('app'));
-```
+   The `<Jedi>` component has been added to the markup.
 
-The above has three parts:
+1. Test your project by running the following command at the root:
 
-1. **Component definition**, We define our `Jedi` component. 
-2. **Application definition**, this where we create the component `Application` and within its `render()` method we place the `Jedi` component
-3. **Render the app**, our last line is us  calling `ReactDOM.render()` with the `Application` component and as second argument we tell it where to find the mount point. In our case this is the `div` with id `app`
+   ```bash
+   npm start
+   ```
+
+   This should tell you the bundle compiled correctly and that your app runs at **http://localhost:8080**.
+
+1. Open up a browser and navigate to **http://localhost:8080**. You should see the following text on the webpage:
+
+   ```output
+   I am a Jedi Component
+   ```
+
+   Success!
+
+## Exercise - create a function component
+
+Let's create the other type of component, so you can compare.
+
+1. Locate the _Jedi.js_ file and change its content to the following:
+
+   ```javascript
+   import React from 'react';
+
+   const Jedi = () => <div>I am a Jedi Component</div>
+
+   export default Jedi;
+   ```
+
+   What you've done is to create component that is just a simple function. What makes it work is that it returns JSX so regardless if you use an arrow function or use the `function` keyword, it needs to return JSX.
+
+1. Run the project with `npm start`:
+
+    ```bash
+    npm start
+    ```
+
+1. Open up a browser and navigate to **http://localhost:8080**:
+
+   You should see:
+
+    ```output
+   I am a Jedi Component
+   ```
+
+   Success !
