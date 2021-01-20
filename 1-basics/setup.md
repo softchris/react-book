@@ -6,7 +6,7 @@ There are many ways to set up a new React project like:
 
 - **Script tags**, it is possible to just use script tags and point to React, React DOM and Babel.
 - **CRA, Create React App**, this tool helps us generate a React project. This is probably the most common set up.
-- **Do it yourself**, it's definitely possible to set everything up with a tool like Web pack.
+- **Do it yourself**, it's definitely possible to set everything up with a tool like Webpack.
 
 ## Script tags
 
@@ -128,7 +128,7 @@ Webpack can also be instructed to manage parts of your code and turn it into som
 
    ```output
    mkdir src
-   mdir dist
+   mkdir dist
    cd src
    touch index.js
    cd ..
