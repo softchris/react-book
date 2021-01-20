@@ -52,7 +52,7 @@ The book
    - [render-props](./5-advanced/render-props.md)
 - [Testing](./6-testing/)
    - [Jest](./6-testing/jest.md)
-   - [nock](./6-testing/nock)
+   - [nock](./6-testing/nock.md)
    - [react-testing-library](./6-testing/react-testing-library.md)  
 - [Redux](./7-redux)
    - [Redux basics](./7-redux/redux.md)
