@@ -374,12 +374,12 @@ Everything is setup at this point, you just need to add React to it.
 
 - For script tag version:
 
-   👉 [Check out script tag project](./solutions/script)
+   👉 [Check out script tag project](./solutions/setup/script)
 
 - For Create React app:
 
-   👉 [Check out this solution](./solutions/my-app)
+   👉 [Check out this solution](./solutions/setup/my-app)
 
 - For Webpack + Babel
 
-   👉 [Check out this solution](./solutions/webpack-app)
+   👉 [Check out this solution](./solutions/setup/webpack-app)
