@@ -2,14 +2,14 @@
 
 > Sígumeme en [Twitter](https://twitter.com/chris_noring), feliz de tomar sus sugerencias sobre temas o mejoras /Chris
 
-este capitulo cubre los siguientes temas
+Este capítulo cubre los siguientes temas:
 
-- **Qué es JSX**. JSX es algo que usas todo el tiempo en React. vamos a explicar que es.
+- **Qué es JSX**. JSX es algo que usas todo el tiempo en React. Vamos a explicar que es.
 - **Por qué usarlo**. Puedes optar por no usar JSX pero casi nadie lo hace, y te hace la vida mas sencilla.
 
 ## Qué y por qué
 
-JSX Es como estar escribiendo XML in JavaScript. Es un paso previo al _procesador_ . No necesitas tenerlo, Pero te hace la vida mucho más fácil.
+JSX Es como estar escribiendo XML in JavaScript. Es un paso previo al _procesador_. No necesitas tenerlo, Pero te hace la vida mucho más fácil.
 
 ### Ejemplo simple
 
@@ -38,7 +38,7 @@ Ok Entonces llamando `createElement`, Aquí están los parametros:
 
 #### Ejemplo con atributos
 
-veamos un ejemplo acontinuacion donde le damos un atributo :
+Veamos un ejemplo acontinuacion donde le damos un atributo :
 
 ```js
 const Elem = <h1>Some title</h1>;
@@ -63,7 +63,7 @@ React.createElement(
 
 Arriba podemos ver que nuestro atributo `title` ahora es parte del segundo argumento.
 
-### multilínea
+### Multilínea
 
 La mayoría del tiempo, definirás JSX en varias filas diferentes y comenzarás de nuevo, podría desconcertarte el porqué no funciona
 
