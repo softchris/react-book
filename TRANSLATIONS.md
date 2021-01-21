@@ -4,7 +4,7 @@ We welcome translations for the lessons in this curriculum!
 
 ## Guidelines
 
-There are [**translations**](https://github.com/softchris/react-book/tree/main/1-basics/translations) folders which contain the translated markdown files.
+There are [**translations**](https://github.com/softchris/react-book/tree/master/1-basics/translations) folders which contain the translated markdown files.
 
 Translated lessons should follow this naming convention:
 
