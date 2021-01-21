@@ -1,17 +1,17 @@
 # JSX
 
-> Sígumeme en [Twitter](https://twitter.com/chris_noring), feliz de tomar sus sugerencias sobre temas o mejoras /Chris
+> Sígueme en [Twitter](https://twitter.com/chris_noring), feliz de tomar sus sugerencias sobre temas o mejoras /Chris
 
 Este capítulo cubre los siguientes temas:
 
-- **Qué es JSX**. JSX es algo que usas todo el tiempo en React. Vamos a explicar que es.
-- **Por qué usarlo**. Puedes optar por no usar JSX pero casi nadie lo hace, y te hace la vida mas sencilla.
+- **Qué es JSX**. JSX es algo que usas todo el tiempo en React, explicaremos el concepto.
+- **Por qué usarlo**. Puedes optar por no usar JSX pero casi nadie lo hace, ademas te hace la vida más sencilla.
 
 ## Qué y por qué
 
-JSX Es como estar escribiendo XML in JavaScript. Es un paso previo al _procesador_. No necesitas tenerlo, Pero te hace la vida mucho más fácil.
+JSX es como estar escribiendo XML in JavaScript. Es un paso previo al _procesador_. No necesitas tenerlo, pero te hace la vida mucho más fácil.
 
-### Ejemplo simple
+### Ejemplo 
 
 Este es un ejemplo simple en una linea de código:
 
@@ -24,13 +24,13 @@ const Elem = <h1>Some title</h1>;
 </div>
 ```
 
-La declaración anterior de `Elem` Parece XML en JavaScript. Entonces, ¿qué es lo que pasa? cuando se está procesando, Se convierte en el siguiente Codigo de ES5:
+La declaración anterior de `Elem` parece XML en JavaScript. Entonces, ¿qué es lo que pasa? cuando se está procesando, Se convierte en el siguiente Codigo de ES5:
 
 ```js
 React.createElement('Elem', null, 'Some title');
 ```
 
-Ok Entonces llamando `createElement`, Aquí están los parametros:
+Entonces llamando `createElement`, Aquí están los parametros:
 
 - **Primer parámetro, nombre del elemento**.`Elem` se convierte en el nombre del elemento.
 - **Segundo parámetro, atributos**. el segundo argumento anterior es `null` y representa nuestros atributos del elemento, del cual no tenemos ninguno.
@@ -49,7 +49,7 @@ const Elem = <h1>Some title</h1>;
 </div>
 ```
 
-Lo anterior se convertiría en el siguiente código:
+El anterior segmento se convertiría en el siguiente código:
 
 ```js
 React.createElement(
@@ -65,8 +65,7 @@ Arriba podemos ver que nuestro atributo `title` ahora es parte del segundo argum
 
 ### Multilínea
 
-La mayoría del tiempo, definirás JSX en varias filas diferentes y comenzarás de nuevo, podría desconcertarte el porqué no funciona
-
+La mayoría del tiempo, definirás JSX en varias filas diferentes y comenzarás de nuevo, podría desconcertarte el porqué no funciona,
 la solución es envolver multiples elementos entre paréntesis `()`, de la siguiente forma:
 
 ```jsx
@@ -92,7 +91,7 @@ const Elem =
 )
 ```
 
-Puedes arregarlo así:
+Se puede arreglar así:
 
 - **Envolviendolo en un elemento**. Puedes envolver tu contenido en un elemento div así:
 
@@ -106,7 +105,7 @@ Puedes arregarlo así:
     )
     ```
 
-- **Usa `React.Fragment`**. Puedes envolverlos en un `React.Fragment`, Así:
+- **Usa `React.Fragment`**. Puedes envolverlos en un `React.Fragment`, de esta forma:
 
     ```html
     const Elem = (
@@ -125,4 +124,4 @@ Esto es prácticamente todo lo que necesitamos saber sobre el tema de JSX para p
 
 - Es como XML que se traduce a llamadas de `React.createElement()`.
 - Multilínea necesita paréntesis para funcionar.
-- Necesitas tener un elemento padre, `React.Fragment` Es una buena opcion para eso.
+- Necesitas tener un elemento padre, `React.Fragment` es una buena opcion para eso.
