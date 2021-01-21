@@ -28,7 +28,7 @@ I'm easiest to find on Twitter.
 - [Links](#links)
 
 The book 
-- Basics
+- [Basics](./1-basics)
    - [JSX](./1-basics/jsx.md)
    - [Setup](./1-basics/setup.md)
    - [First component](./1-basics/first-component.md)
@@ -37,24 +37,24 @@ The book
    - [Methods](./1-basics/methods.md)
    - [Thinking in Components](./1-basics/thinking-in-components.md)
    - [Conditional](./1-basics/conditional.md)
-- Styling
+- [Styling](./2-styling)
    - [Styled components](./2-styling/styled-components.md)
-- Images
+- [Images](./3-images)
    - [Importing images](./3-images/images.md)
-- Routing
+- [Routing](./4-routing)
    - [Routing](./4-routing/routing.md)
    - [Router and query parameters](./4-routing/params.md)
    - [Programmatic navigation](./4-routing/programmatic-navigation.md)
    - [Lazy loading](./4-routing/lazy-loading.md)
-- Advanced
+- [Advanced](./5-advanced)
    - [Context API](./5-advanced/context-api.md)
    - [Hooks](./5-advanced/hooks.md)
    - [render-props](./5-advanced/render-props.md)
-- Testing
+- [Testing](./6-testing/)
    - [Jest](./6-testing/jest.md)
    - [nock](./6-testing/nock.md)
    - [react-testing-library](./6-testing/react-testing-library.md)  
-- Redux
+- [Redux](./7-redux)
    - [Redux basics](./7-redux/redux.md)
    - [Actions](./7-redux/actions.md)
    - [Reducers](./7-redux/reducers.md)
@@ -62,9 +62,9 @@ The book
    - [Adding Redux to React](./7-redux/adding-redux-to-react.md)
    - [Sagas, side effects](./7-redux/sagas.md)
    - [Redux form](./7-redux/redux-form.md) 
-- Tools
+- [Tools](./8-tools)
    - [Storybook](./8-tools/storybook.md) 
-- Forms
+- [Forms](./9-forms)
    - [forms](./9-forms/forms.md)
    - [Forms validation](./9-forms/forms-validation.md)
    - [Formik part I](./9-forms/formik-partI.md)
