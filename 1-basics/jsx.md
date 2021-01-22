@@ -4,7 +4,7 @@
 
 This chapter covers the following topics:
 
-- **What is JSX**. JSX is somthing you us all the time in React. Lets explain what it is.
+- **What is JSX**. JSX is something you use all the time in React. Lets explain what it is.
 - **Why use it**. You can opt out of using JSX but almost no one does, and it does make your life simpler.
 
 ## What & Why
