@@ -8,7 +8,7 @@ Hope the book helps you in your career.
 
 ## Need to brush up on Web Dev basics?
 
-I know we sometimes have a tendency to learn a framework before we know the basics of a language. It's fine, no shame. But if you need to brush up on your Web Dev basics then this repo takes you from th very beginning to some decently advanced projects on HTML, CSS and JavaScript
+I know we sometimes have a tendency to learn a framework before we know the basics of a language. It's fine, no shame. But if you need to brush up on your Web Dev basics then this repo takes you from the very beginning to some decently advanced projects on HTML, CSS and JavaScript
 
 I've co authored this repo on web fundamentals.
 
