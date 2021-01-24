@@ -161,10 +161,10 @@ What about check boxes? Well for checkboxes you can select several different one
   Yellow <input type="checkbox" name="yellow" id="yellow" value={this.state.yellow} onChange={this.handleChange} />
 </div>
 <div>
-  Blue <input type="checkbox" name="blue" id="blue" value={this.state.yellow} onChange={this.handleChange} />
+  Blue <input type="checkbox" name="blue" id="blue" value={this.state.blue} onChange={this.handleChange} />
 </div>
 <div>
-  Red <input type="checkbox" name="red" id="red" value={this.state.yellow} onChange={this.handleChange} />
+  Red <input type="checkbox" name="red" id="red" value={this.state.red} onChange={this.handleChange} />
 </div>
 ```
 
