@@ -11,7 +11,7 @@ The default behavior when submitting a form is form to post the result and move 
 </Form>
 ```
 
-##Controlled components
+## Controlled components
 In React however you tend to want to control Forms a bit more. You usually wants to:
 
 - verify a form is a valid before being submitted
@@ -40,7 +40,7 @@ class App extends Component {
   }
 }
 ```
-###Single source of truth
+### Single source of truth
 The form itself maintains the state of all its input fields but you tend to want to control that and make React the single source of truth. We can do that by putting each element value in the state, like so:
 
 ```js
