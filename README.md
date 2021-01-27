@@ -1,3 +1,13 @@
+[![GitHub license](https://img.shields.io/github/license/softchris/react-book.svg)](https://github.com/softchris/react-book/blob/master/LICENSE)
+[![GitHub contributors](https://img.shields.io/github/contributors/softchris/react-book.svg)](https://GitHub.com/softchris/react-book/graphs/contributors/)
+[![GitHub issues](https://img.shields.io/github/issues/softchris/react-book.svg)](https://GitHub.com/softchris/react-book/issues/)
+[![GitHub pull-requests](https://img.shields.io/github/issues-pr/softchris/react-book.svg)](https://GitHub.com/softchris/react-book/pull/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+
+[![GitHub forks](https://img.shields.io/github/forks/softchris/react-book.svg?style=social&label=Fork&maxAge=2592000)](https://GitHub.com/softchris/react-book/network/)
+[![GitHub stars](https://img.shields.io/github/stars/softchris/react-book.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/softchris/react-book/stargazers/)
+[![GitHub watchers](https://img.shields.io/github/watchers/softchris/react-book.svg?style=social&label=Watch&maxAge=2592000)](https://GitHub.com/softchris/react-book/watchers/)
+
 # React Book, your beginner guide to React
 
 This is a completely free book on React.js
