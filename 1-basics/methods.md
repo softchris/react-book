@@ -296,3 +296,11 @@ As you can see it's a lot easier to deal wiring up events to handlers in functio
 1. In a browser, navigate to [http://localhost:8080](http://localhost:8080])
 
    You should see the direction state at the top. Select any of the four buttons, and ensure the state is updated.
+
+## Solution
+
+  👉 [Check out this solution](./solutions/methods)
+
+## Summary
+
+You were introduced to method and how you could bind them to events. A good practice is to bind the method, that you  mean to use for event handling, in the constructor. There's also the option of using a lambda, that means you can skip the binding and you can additionally pass values to the handler.
