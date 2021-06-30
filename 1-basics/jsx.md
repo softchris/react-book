@@ -117,7 +117,7 @@ You can fix this by either:
     )
     ```
 
-`React.Fragment` would be the parent element  instead of us using a `div`.
+`React.Fragment` would be the parent element instead of using a `div`.
 
 ## Summary
 
