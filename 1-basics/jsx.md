@@ -45,7 +45,7 @@ const Elem = <h1>Some title</h1>;
 
 // usage:
 <div>
-  <Elem title="a title">
+  <Elem title="a title" />
 </div>
 ```
 
