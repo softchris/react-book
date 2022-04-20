@@ -8,103 +8,104 @@
 [![GitHub stars](https://img.shields.io/github/stars/softchris/react-book.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/softchris/react-book/stargazers/)
 [![GitHub watchers](https://img.shields.io/github/watchers/softchris/react-book.svg?style=social&label=Watch&maxAge=2592000)](https://GitHub.com/softchris/react-book/watchers/)
 
-# React Book, your beginner guide to React
+# React Book, ваш путеводитель по React для начинающих 
 
-This is a completely free book on React.js
+Это совершенно бесплатная книга по React.js.
 
-Why did I write it?  Knowledge deserves to be free. Note, things changes fast, and I would love to have your help keeping it up to date.
+Почему я это написал? Знания заслуживают того, чтобы быть бесплатными. Обратите внимание, что все меняется быстро, и мне бы хотелось, чтобы вы помогали поддерживать его в актуальном состоянии.
 
-Hope the book helps you in your career.
 
-## Need to brush up on Web Dev basics?
+Надеюсь эта книга поможет вам и вашей карьере
 
-I know we sometimes have a tendency to learn a framework before we know the basics of a language. It's fine, no shame. But if you need to brush up on your Web Dev basics then this repo takes you from the very beginning to some decently advanced projects on HTML, CSS and JavaScript
+## Нужно освежить в памяти основы веб-разработки?
 
-I've co authored this repo on web fundamentals.
+Я знаю, что иногда мы склонны изучать фреймворк до того, как узнаем основы языка. Это нормально, не стыдно. Но если вам нужно освежить свои знания основ веб-разработки, то этот репозиторий проведет вас с самого начала к некоторым прилично продвинутым проектам на HTML, CSS и JavaScript.
 
-Check it out 👉 [Web dev for beginners](https://github.com/microsoft/Web-Dev-For-Beginners)
+Я был соавтором этого репозитория по основам веб-разработки.
 
-## Contact
+Смотрите здесь 👉 [Веб-разработка для начинающих](https://github.com/microsoft/Web-Dev-For-Beginners)
 
-I'm easiest to find on Twitter.
+## Контакты
+
+Проще всего найти меня в Twitter.
 
 👉 [Chris Noring](https://twitter.com/chris_noring)
 
-## Table of Contents
+## Оглавление
 
-- [Contributions](#contributions)
-- [Translations](#translations)
+- [Сотрудничество](#сотрудничество)
+- [Переводы](#переводы)
 - [GitHub Pages](#github-pages)
-- [Links](#links)
+- [Ссылки](#ссылки)
 
 The book 
 - Basics
    - [JSX](./1-basics/jsx.md)
-   - [Setup](./1-basics/setup.md)
-   - [First component](./1-basics/first-component.md)
-   - [Props](./1-basics/props.md)
-   - [State](./1-basics/state.md)
-   - [Methods](./1-basics/methods.md)
-   - [Thinking in Components](./1-basics/thinking-in-components.md)
-   - [Conditional](./1-basics/conditional.md)
+   - [Первоначальная настройка](./1-basics/setup.md)
+   - [Первый компонент](./1-basics/first-component.md)
+   - [Пропсы](./1-basics/props.md)
+   - [Состояние(Стейт)](./1-basics/state.md)
+   - [Методы](./1-basics/methods.md)
+   - [Мышление компонентами](./1-basics/thinking-in-components.md)
+   - [Условный рендеринг](./1-basics/conditional.md)
 - Styling
-   - [Styled components](./2-styling/styled-components.md)
+   - [Стилизованные компоненты](./2-styling/styled-components.md)
 - Images
-   - [Importing images](./3-images/images.md)
+   - [Импорт изображений](./3-images/images.md)
 - Routing
-   - [Routing](./4-routing/routing.md)
-   - [Router and query parameters](./4-routing/params.md)
-   - [Programmatic navigation](./4-routing/programmatic-navigation.md)
-   - [Lazy loading](./4-routing/lazy-loading.md)
+   - [Роутинг](./4-routing/routing.md)
+   - [Роутер и параметры запроса](./4-routing/params.md)
+   - [Программная навигация](./4-routing/programmatic-navigation.md)
+   - [Ленивая загрузка](./4-routing/lazy-loading.md)
 - Advanced
-   - [Context API](./5-advanced/context-api.md)
-   - [Hooks](./5-advanced/hooks.md)
+   - [Контекст API](./5-advanced/context-api.md)
+   - [Хуки](./5-advanced/hooks.md)
    - [render-props](./5-advanced/render-props.md)
 - Testing
    - [Jest](./6-testing/jest.md)
    - [nock](./6-testing/nock.md)
    - [react-testing-library](./6-testing/react-testing-library.md)  
 - Redux
-   - [Redux basics](./7-redux/redux.md)
-   - [Actions](./7-redux/actions.md)
-   - [Reducers](./7-redux/reducers.md)
-   - [Store](./7-redux/store.md)
-   - [Adding Redux to React](./7-redux/adding-redux-to-react.md)
-   - [Sagas, side effects](./7-redux/sagas.md)
+   - [Основы Redux](./7-redux/redux.md)
+   - [Экшены (Actions)](./7-redux/actions.md)
+   - [Редьюсеры (Reducers)](./7-redux/reducers.md)
+   - [Хранилище (Стор - Store)](./7-redux/store.md)
+   - [Добавление Redux в React](./7-redux/adding-redux-to-react.md)
+   - [Саги (Sagas), побочные эффекты](./7-redux/sagas.md)
    - [Redux form](./7-redux/redux-form.md) 
 - Tools
    - [Storybook](./8-tools/storybook.md) 
 - Forms
-   - [forms](./9-forms/forms.md)
-   - [Forms validation](./9-forms/forms-validation.md)
-   - [Formik part I](./9-forms/formik-partI.md)
-   - [Formik part II](./9-forms/formik-partII.md)
+   - [Формы](./9-forms/forms.md)
+   - [Валидация форм](./9-forms/forms-validation.md)
+   - [Formik часть I](./9-forms/formik-partI.md)
+   - [Formik часть II](./9-forms/formik-partII.md)
 
-## Contributions
+## Сотрудничество
 
-Contributions are very welcome. Please raise an issue of you see something or a PR.
+Сотрудничество очень приветствуется. Пожалуйста, создайте ишью (issue) о том, что вы что-то видите, или PR.
 
-I welcome contributions on:
+Я приветствую вклады в:
 
-- Suggestions on topics to cover
-- Correctness issues
-- Spelling
-- Suggestions on better formatting
+- Предложения по темам для освещения
+- Проблемы с правильностью
+- Написание
+- Предложения по лучшему форматированию
 
-I hope I hear from you. :)
+Я надеюсь услышать вас. :)
 
-## Translations
+## Переводы
 
-This book now supports Docsify and really welcomes translations. Check out [Translations.md](./TRANSLATIONS.md)
+Эта книга теперь поддерживает Docsify и приветствует переводы. Смотрите [Translations.md](./TRANSLATIONS.md)
 
 ## GitHub Pages
 
-This book can also be read on GH Pages
+Эту книгу также можно прочитать на GH Pages.
 
 > https://softchris.github.io/react-book/
 
-## Links
+## Ссылки
 
-- 👉 [Publish a React App to Azure](https://docs.microsoft.com/en-us/learn/modules/publish-app-service-static-web-app-api/?WT.mc_id=academic-0000-chnoring) This module takes you through using the so called Azure Static Web Apps service, you can select the path that fits your framework, i.e React, Angular, Vue or Svelte.
+- 👉 [Публикация приложения React в Azure](https://docs.microsoft.com/en-us/learn/modules/publish-app-service-static-web-app-api/?WT.mc_id=academic-0000-chnoring) Этот модуль знакомит вас с так называемой службой Статических веб-приложений Azure (Azure Static Web Apps service). Вы можете выбрать путь, который соответствует вашей платформе, т. е. React, Angular, Vue или Svelte.
 
-- 👉 [Node.js 5 modules](https://docs.microsoft.com/en-us/learn/paths/build-javascript-applications-nodejs/?WT.mc_id=academic-0000-chnoring) You're going to need a backend API sooner or later. Node.js is good choice for backend and there are many frameworks that will help you build an API like Express, Koa, Nest, Fastify etc.
+- 👉 [Node.js 5 modules](https://docs.microsoft.com/en-us/learn/paths/build-javascript-applications-nodejs/?WT.mc_id=academic-0000-chnoring) Рано или поздно вам понадобится backend API. Node.js — хороший выбор для серверной части, и существует множество фреймворков, которые помогут вам создать API, например Express, Koa, Nest, Fastify и т. д.

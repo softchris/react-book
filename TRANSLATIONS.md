@@ -1,13 +1,14 @@
-# Contribute by translating lessons
+# Внесите свой вклад, переводя уроки
 
-We welcome translations for the lessons in this curriculum!
+Мы приветствуем переводы уроков в этой программе!
 
-## Guidelines
+## Методические рекомендации
 
-There are [**translations**](https://github.com/softchris/react-book/tree/master/1-basics/translations) folders which contain the translated markdown files.
+Существуют папки [**translations**](https://github.com/softchris/react-book/tree/master/1-basics/translations), содержащие переведенные файлы уценки.
 
-Translated lessons should follow this naming convention:
 
-**README._[language]_.md**
+Переведенные уроки должны следовать этому соглашению об именах:
 
-where _[language]_ is a two letter language abbreviation following the ISO 639-1 standard (e.g. `README.es.md` for Spanish and `README.nl.md` for Dutch).
+**README._[язык]_.md**
+
+где _[язык]_ — двухбуквенная аббревиатура языка, соответствующая стандарту ISO 639-1 (например, `README.es.md` для испанского и `README.nl.md` для голландского).
