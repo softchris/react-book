@@ -24,24 +24,57 @@ We will do the following:
 
 - **Use the component in our app**. You will see how you can add the component to your app.
 
-### -1- Define the component
+### -0- Create project
 
-1. Create a new project by running the command `git clone`:
+1. Create a new project by running the below command:
 
-   ```bash
-   git clone https://github.com/softchris/react-starter-project my-first-app
-   cd my-first-app
+   ```console
+   npx create-snowpack-app app --template @snowpack/app-template-minimal
    ```
 
-   This starter project is based on the tutorial in [Setup with Webpack](./setup.md).
+1. Run `npm install` to add the React specific libraries:
 
-1. Run `npm install` to install all dependencies:
+   ```console
+   npm install react react-dom --save
+   ```
 
-    ```bash
-    npm install
-    ```
+1. Rename your entry point file:
 
-1. In the _src_ directory, add a file `Jedi.js` and give it the following content:
+   ```console
+   mv index.js index.jsx
+   ```
+
+1. Add the following content to *index.jsx*:
+
+   ```jsx
+   import React from 'react';
+
+   import ReactDOM from 'react-dom';
+   ReactDOM.render(
+     <div>My app</div>, 
+     document.getElementById('root')
+   );
+   ```
+
+1. Add the following line to *index.html* just above the script tag:
+
+   ```html
+   <div id="root"></div>
+   ```
+
+1. Run the app with `npm start`
+
+   ```console
+   npm start
+   ```
+
+   You should now see "My app" at http://localhost:8080. 
+
+   This will create a sub directory *app*.
+
+### -1- Create your first component
+
+1. Create a file *Jedi.jsx*, and give it the following content:
 
    ```javascript
     import React from 'react';
@@ -63,7 +96,7 @@ We will do the following:
 
 Now that we have our component we can easily use it.
 
-1. Open the file _index.js_ and add the following row at the top:
+1. Open the file *index.js* and add the following row at the top:
 
    ```javascript
    import Jedi from './Jedi';
@@ -73,11 +106,9 @@ Now that we have our component we can easily use it.
 
    ```javascript
    ReactDOM.render(
-      <div>
-        <Jedi />
-      </div>,
-      document.getElementById('app')
-    );
+    <Jedi />,
+    document.getElementById('root')
+   );
    ```
 
    The `<Jedi>` component has been added to the markup.
@@ -102,7 +133,7 @@ Now that we have our component we can easily use it.
 
 Let's create the other type of component, so you can compare.
 
-1. Locate the _Jedi.js_ file and change its content to the following:
+1. Locate the *Jedi.js* file and change its content to the following:
 
    ```javascript
    import React from 'react';
