@@ -19,6 +19,7 @@ Let's show both types however, if you maintain an older code base, it might not 
 ## Exercise - create a component
 
 > [![Create React component video](https://img.youtube.com/vi/0MZ2MkPCk1Q/0.jpg)](https://www.youtube.com/watch?v=0MZ2MkPCk1Q)
+> 
 > Check out the video for the below steps
 
 We will do the following:
