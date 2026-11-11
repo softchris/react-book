@@ -83,6 +83,7 @@
     {
       "parameters": {
         "toolDescription": "Returns McGarrigle's full case file for Blackwood Manor as JSON: the setting, rooms, suspects and their statements, every clue, and the killer. Call it before answering questions about the case.",
+        "method": "GET",
         "url": "https://raw.githubusercontent.com/softchris/blackwood-manor/main/game.json",
         "options": {
           "response": {
@@ -92,8 +93,8 @@
           }
         }
       },
-      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
-      "typeVersion": 1.1,
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
       "position": [
         480,
         240
