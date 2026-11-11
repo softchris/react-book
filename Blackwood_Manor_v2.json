@@ -1,0 +1,536 @@
+{
+  "name": "Blackwood Manor: Murder Mystery",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Blackwood Manor: murder mystery\n\n**Setup (2 min)**\n1. Create a Data Table called `players` with columns: `pid`, `codename`, `found`, `visited`, `started_at`, `finished_at` (all text) and `wrong`, `score` (number).\n2. Open **Get Player** and **Save Player**, select that table.\n3. Activate the workflow.\n\n**One QR code** (production URL): `/webhook/intro` page or `/webhook/mansion` directly. Everything else is navigated by in-page links:\n- Rooms: `?room=library|kitchen|greenhouse|cellar` (listed on the case file and in every room)\n- Items: `?item=...` (links inside the room under \"Look around\")\n- Accuse: `?accuse` (button unlocks when all rooms/clues are done)\n\nOptional per item in game.json: `\"spot\": \"The dusty bookshelf\"` is the hint shown before the clue is found (falls back to \"Something catches your eye\").\n\nGame content (rooms, suspects, clues, killer) lives at the top of the **Game Logic** node.\n\nIf pages render without styling or links don't work, check n8n's HTML-response sandboxing.",
+        "height": 420,
+        "width": 520
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        -112
+      ],
+      "id": "1d142e1a-0311-4948-ad19-f037b98700a9",
+      "name": "README"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Request: pull the player id out of the cookie (or mint a new one) and normalise the query.\nconst req = $input.first().json;\nconst cookie = (req.headers && req.headers.cookie) || '';\nconst m = cookie.match(/(?:^|;\\s*)pid=([A-Za-z0-9]{8,40})/);\nconst pid = m\n  ? m[1]\n  : 'p' + Math.random().toString(36).slice(2, 12) + Date.now().toString(36);\n\nreturn [{\n  json: {\n    pid,\n    hadCookie: !!m,\n    query: req.query || {},\n  },\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        768,
+        128
+      ],
+      "id": "b534d242-79dd-4742-aaba-9098db32a2bc",
+      "name": "Parse Request"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "smdcGynO82up6xTD",
+          "mode": "list",
+          "cachedResultName": "players",
+          "cachedResultUrl": "/projects/z0j0HyMKIhkTkupK/datatables/smdcGynO82up6xTD"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "pid",
+              "keyValue": "={{ $json.pid }}"
+            }
+          ]
+        },
+        "limit": 1
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        976,
+        128
+      ],
+      "id": "056a41bf-84c1-489a-a6b9-7aca8e5497ee",
+      "name": "Get Player",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// ───────────────────────── GAME CONTENT (loaded from game.json) ─────────────────────────\nconst BASE_URL = \"https://github.com/softchris/blackwood-manor/blob/main/\";\n// raw URL of the blob link: the github.com/.../blob/... page itself is HTML, not JSON\nconst GAME_URL = \"https://raw.githubusercontent.com/softchris/blackwood-manor/main/game.json\";\n\nlet GAME = await this.helpers.httpRequest({ method: 'GET', url: GAME_URL, json: false });\nif (Buffer.isBuffer(GAME)) GAME = GAME.toString('utf8');\nif (typeof GAME === 'string') GAME = JSON.parse(GAME);\n\nconst CODENAMES = ['Inspector Fox', 'Detective Wren', 'Sleuth Magpie', 'Constable Heron', 'Agent Raven', 'Sergeant Otter', 'Miss Marple-ish', 'Inspector Badger'];\n\n// ───────────────────────── STATE ─────────────────────────\nconst req = $('Parse Request').first().json;\nconst row = $input.first().json || {};\nconst q = req.query || {};\nconst now = Date.now();\n\nconst player = {\n  pid: req.pid,\n  codename: row.codename || CODENAMES[Math.floor(Math.random() * CODENAMES.length)] + ' #' + (10 + Math.floor(Math.random() * 90)),\n  found: row.found || '',\n  visited: row.visited || '',\n  started_at: row.started_at || new Date(now).toISOString(),\n  finished_at: row.finished_at || '',\n  wrong: Number(row.wrong) || 0,\n  score: Number(row.score) || 0,\n};\n\nconst found = new Set(player.found.split(',').filter(Boolean));\nconst visited = new Set(player.visited.split(',').filter(Boolean));\nconst solved = !!player.finished_at;\n\nconst esc = (s) => String(s).replace(/[&<>\"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;' }[c]));\nconst roomUnlocked = (id) => !GAME.rooms[id].requires || found.has(GAME.rooms[id].requires);\nconst itemsIn = (roomId) => Object.entries(GAME.items).filter(([, it]) => it.room === roomId);\nconst totalItems = Object.keys(GAME.items).length;\nconst totalRooms = Object.keys(GAME.rooms).length;\n\n// Accusation unlocks once every clue is found and every room visited\nconst allDone = () => found.size >= totalItems && visited.size >= totalRooms;\n\n// In-game navigation: links to every room (locked ones are shown but marked)\nconst nav = (currentId) => '<h3>Go to...</h3>' + Object.entries(GAME.rooms)\n  .filter(([id]) => id !== currentId)\n  .map(([id, r]) => roomUnlocked(id)\n    ? `<a class=\"btn alt\" href=\"?room=${id}\">${esc(r.name)}</a>`\n    : `<a class=\"btn alt locked\" href=\"?room=${id}\">🔒 ${esc(r.name)}</a>`)\n  .join('');\n\n// Build a full image URL from BASE_URL + obj.url\nconst assetUrl = (u) => {\n  if (!u) return '';\n  let full = /^https?:\\/\\//.test(u) ? u : BASE_URL.replace(/\\/?$/, '/') + u.replace(/^\\//, '');\n  // github.com/.../blob/... serves an HTML page, so ask for the raw file instead\n  if (/github\\.com\\/.+\\/blob\\//.test(full) && !full.includes('?')) full += '?raw=true';\n  return full;\n};\n// Render an <img> only if the object has a url property\nconst img = (obj, cls = 'pic') =>\n  obj && obj.url ? `<img class=\"${cls}\" src=\"${esc(assetUrl(obj.url))}\" alt=\"${esc(obj.name || '')}\" loading=\"lazy\">` : '';\n\n// ───── ADMIN: ?admin=true marks every room visited and every item found ─────\nconst ADMIN_VALUE = 'true'; // change to a secret string to make it harder to guess\nif (q.admin === ADMIN_VALUE) {\n  Object.keys(GAME.items).forEach((id) => found.add(id));\n  Object.keys(GAME.rooms).forEach((id) => visited.add(id));\n}\n\n// ───────────────────────── VIEW ─────────────────────────\nconst accuseBar = () => {\n  if (solved || q.accuse !== undefined) return '';\n  if (allDone()) return '<a class=\"btn red\" href=\"?accuse\">Make your accusation</a>';\n  return `<a class=\"btn disabled\" aria-disabled=\"true\" tabindex=\"-1\">Make your accusation</a>\n    <p class=\"muted\" style=\"text-align:center\">Locked until you've visited every room and found every clue (${found.size}/${totalItems} clues, ${visited.size}/${totalRooms} rooms).</p>`;\n};\n\nconst page = (inner) => `<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>${esc(GAME.title)}</title>\n<style>\n  :root{--bg:#14110f;--card:#211c18;--ink:#eadfcf;--muted:#9a8f80;--gold:#c9a227;--red:#b3392f;--green:#4d8f5f}\n  *{box-sizing:border-box}\n  body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 Georgia,'Times New Roman',serif}\n  .wrap{max-width:560px;margin:0 auto;padding:20px 16px 48px}\n  .bar{display:flex;justify-content:space-between;gap:8px;font:13px system-ui,sans-serif;color:var(--muted);border-bottom:1px solid #3a322b;padding-bottom:10px;margin-bottom:18px}\n  h1,h2,h3{font-weight:normal;color:var(--gold);margin:.2em 0 .4em}\n  h1{font-size:30px}h2{font-size:24px}h3{font-size:18px}\n  .card{background:var(--card);border:1px solid #3a322b;border-radius:10px;padding:14px 16px;margin:14px 0;overflow:hidden}\n  .quote{font-style:italic}\n  .muted{color:var(--muted);font-size:14px}\n  .ok{color:var(--green)}.bad{color:var(--red)}\n  a.btn{display:block;text-align:center;text-decoration:none;background:var(--gold);color:#14110f;padding:13px;border-radius:8px;font:600 16px system-ui,sans-serif;margin:10px 0}\n  a.btn.alt{background:transparent;color:var(--gold);border:1px solid var(--gold)}\n  a.btn.red{background:var(--red);color:#fff}\n  a.btn.locked{opacity:.55;border-style:dashed}\n  a.spot{color:var(--gold)}\n  .btn.disabled{background:#3a322b;color:#7a7065;cursor:not-allowed;pointer-events:none}\n  ul{padding-left:20px}li{margin:6px 0}\n  img.pic{display:block;width:100%;height:auto;border-radius:8px;border:1px solid #3a322b;margin:10px 0}\n  img.portrait{float:right;width:96px;height:96px;object-fit:cover;border-radius:50%;border:2px solid var(--gold);margin:0 0 8px 12px}\n  img.thumb{display:block;width:100%;max-width:220px;height:auto;border-radius:6px;margin:6px 0}\n</style></head><body><div class=\"wrap\">\n<div class=\"bar\"><span>${esc(player.codename)}</span><span>Clues ${found.size}/${totalItems} · Rooms ${visited.size}/${totalRooms}</span></div>\n${inner}\n${accuseBar()}\n</div></body></html>`;\n\nconst notebook = () => {\n  if (!found.size) return '<p class=\"muted\">Your notebook is empty. Explore the rooms to find clues.</p>';\n  return '<ul>' + [...found].map((id) => `<li><strong>${esc(GAME.items[id].name)}</strong> <span class=\"muted\">(${esc(GAME.rooms[GAME.items[id].room].name)})</span>${img(GAME.items[id], 'thumb')}${esc(GAME.items[id].text)}</li>`).join('') + '</ul>';\n};\n\nconst lockedView = (roomId) => `\n  <h2>🔒 ${esc(GAME.rooms[roomId].name)}</h2>\n  <div class=\"card\"><p>${esc(GAME.rooms[roomId].locked || 'This room is locked.')}</p></div>\n  ${nav(roomId)}\n  <a class=\"btn alt\" href=\"?\">My case file</a>`;\n\nlet body = '';\n\nif (q.room && GAME.rooms[q.room]) {\n  // ───── ROOM SCAN ─────\n  const id = q.room;\n  const room = GAME.rooms[id];\n  if (!roomUnlocked(id)) {\n    body = lockedView(id);\n  } else {\n    visited.add(id);\n    const s = GAME.suspects[room.suspect];\n    const here = itemsIn(id);\n    body = `\n      <h2>${esc(room.name)}</h2>\n      ${img(room)}\n      <p>${esc(room.desc)}</p>\n      <div class=\"card\">\n        ${img(s, 'portrait')}\n        <h3>${esc(s.name)} <span class=\"muted\">– ${esc(s.role)}</span></h3>\n        <p class=\"quote\">“${esc(s.statement)}”</p>\n      </div>\n      <h3>Look around</h3>\n      ${here.length ? '<ul>' + here.map(([k, it]) => found.has(k)\n        ? `<li>✔ <a class=\"spot\" href=\"?item=${k}\">${esc(it.name)}</a></li>`\n        : `<li>🔍 <a class=\"spot\" href=\"?item=${k}\">${esc(it.spot || 'Something catches your eye')}</a></li>`).join('') + '</ul>'\n        : '<p class=\"muted\">Nothing of interest here.</p>'}\n      ${nav(id)}\n      <a class=\"btn alt\" href=\"?\">My case file</a>`;\n  }\n} else if (q.item && GAME.items[q.item]) {\n  // ───── ITEM SCAN ─────\n  const id = q.item;\n  const it = GAME.items[id];\n  if (!roomUnlocked(it.room)) {\n    body = lockedView(it.room);\n  } else {\n    visited.add(it.room);\n    const isNew = !found.has(id);\n    found.add(id);\n    const unlocks = Object.entries(GAME.rooms).filter(([, r]) => r.requires === id).map(([, r]) => r.name);\n    body = `\n      <h2>${isNew ? 'Clue found!' : 'Already in your notebook'}</h2>\n      <div class=\"card\"><h3>${esc(it.name)}</h3>${img(it)}<p>${esc(it.text)}</p></div>\n      ${isNew && unlocks.length ? `<p class=\"ok\"><strong>New location unlocked:</strong> ${esc(unlocks.join(', '))}</p>` : ''}\n      <p class=\"muted\">${found.size} of ${totalItems} clues collected.</p>\n      <a class=\"btn\" href=\"?room=${it.room}\">Back to ${esc(GAME.rooms[it.room].name)}</a>\n      <a class=\"btn alt\" href=\"?\">My case file</a>`;\n  }\n} else if (q.accuse !== undefined) {\n  // ───── ACCUSATION ─────\n  const guess = q.accuse;\n  if (solved) {\n    body = `<h2>Case closed</h2><div class=\"card\"><p class=\"ok\">You already solved this one. Final score: <strong>${player.score}</strong>.</p></div><a class=\"btn alt\" href=\"?\">My case file</a>`;\n  } else if (!allDone()) {\n    body = `\n      <h2>Not yet, detective</h2>\n      <div class=\"card\"><p>You haven’t gathered enough evidence to accuse anyone. Visit every room and find every clue first.</p></div>\n      <a class=\"btn alt\" href=\"?\">Back to my case file</a>`;\n  } else if (GAME.suspects[guess]) {\n    if (guess === GAME.killer) {\n      const elapsed = Math.round((now - new Date(player.started_at).getTime()) / 1000);\n      player.finished_at = new Date(now).toISOString();\n      player.score = Math.max(0, Math.round(1200 - elapsed / 2 - player.wrong * 150));\n      const k = GAME.suspects[guess];\n      body = `\n        <h2>🎉 Case solved!</h2>\n        <div class=\"card\">\n          ${img(k, 'portrait')}\n          <p><strong>${esc(k.name)}</strong> did it. Cornered by the evidence, the butler confesses: the cellar was being quietly sold off, and Lord Ashworth was about to call in the auditors.</p>\n          <p>Time: <strong>${Math.floor(elapsed / 60)}m ${elapsed % 60}s</strong> · Wrong accusations: <strong>${player.wrong}</strong></p>\n          <p>Score: <strong>${player.score}</strong></p>\n        </div>\n        <p class=\"muted\">Show this screen at the booth to claim your prize.</p>`;\n    } else {\n      player.wrong += 1;\n      body = `\n        <h2 class=\"bad\">Not quite...</h2>\n        <div class=\"card\"><p>${esc(GAME.suspects[guess].name)} has an answer for everything, and your accusation falls flat. (-150 points)</p></div>\n        <a class=\"btn\" href=\"?accuse\">Try again</a><a class=\"btn alt\" href=\"?\">Back to my case file</a>`;\n    }\n  } else {\n    body = `\n      <h2>Make your accusation</h2>\n      <p class=\"muted\">Careful: each wrong accusation costs you points.</p>\n      ${Object.entries(GAME.suspects).map(([id, s]) => `<a class=\"btn red\" href=\"?accuse=${id}\">${esc(s.name)} <span style=\"opacity:.8\">– ${esc(s.role)}</span></a>`).join('')}\n      <a class=\"btn alt\" href=\"?\">Not yet, back to my case file</a>`;\n  }\n} else {\n  // ───── LOBBY / CASE FILE ─────\n  const fresh = !visited.size && !found.size;\n  body = `\n    <h1>${esc(GAME.title)}</h1>\n    ${fresh ? `<p>${esc(GAME.intro)}</p><p>Choose a room below to step inside.</p>` : '<h3>Your case file</h3>' + notebook()}\n    ${nav('')}`;\n}\n\n// ───────────────────────── OUTPUT ─────────────────────────\nreturn [{\n  json: {\n    html: page(body),\n    player: {\n      pid: player.pid,\n      codename: player.codename,\n      found: [...found].join(','),\n      visited: [...visited].join(','),\n      started_at: player.started_at,\n      finished_at: player.finished_at,\n      wrong: player.wrong,\n      score: player.score,\n    },\n  },\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        128
+      ],
+      "id": "d7c4b80d-a16e-42e2-b4d8-ba80eefc7de2",
+      "name": "Game Logic"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "smdcGynO82up6xTD",
+          "mode": "list",
+          "cachedResultName": "players",
+          "cachedResultUrl": "/projects/z0j0HyMKIhkTkupK/datatables/smdcGynO82up6xTD"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "pid",
+              "keyValue": "={{ $json.player.pid }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "pid": "={{ $json.player.pid }}",
+            "codename": "={{ $json.player.codename }}",
+            "found": "={{ $json.player.found }}",
+            "visited": "={{ $json.player.visited }}",
+            "started_at": "={{ $json.player.started_at }}",
+            "finished_at": "={{ $json.player.finished_at }}",
+            "wrong": "={{ $json.player.wrong }}",
+            "score": "={{ $json.player.score }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "pid",
+              "displayName": "pid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "codename",
+              "displayName": "codename",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "found",
+              "displayName": "found",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "visited",
+              "displayName": "visited",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "started_at",
+              "displayName": "started_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "finished_at",
+              "displayName": "finished_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "wrong",
+              "displayName": "wrong",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "score",
+              "displayName": "score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        128
+      ],
+      "id": "32882b09-d4f3-4c2e-9074-451ecf3a58a8",
+      "name": "Save Player"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $('Game Logic').first().json.html }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=utf-8"
+              },
+              {
+                "name": "Set-Cookie",
+                "value": "=pid={{ $('Game Logic').first().json.player.pid }}; Path=/; Max-Age=43200; SameSite=Lax; HttpOnly"
+              },
+              {
+                "name": "Cache-Control",
+                "value": "no-store"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1648,
+        128
+      ],
+      "id": "edafd70b-f56e-4ed5-934b-f535cde1f3d3",
+      "name": "Respond"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ (() => {\n// ───────────────────────── GAME CONTENT (edit me) ─────────────────────────\nconst BASE_URL = \"https://github.com/softchris/blackwood-manor/blob/main/\";\n\nconst GAME = {\n  title: 'Blackwood Manor',\n  killer: 'butler',\n  intro:\n    'Lord Ashworth was found slumped in his armchair at midnight. The doors were locked from the inside. ' +\n    'One of the four people in this house is a murderer. Explore the manor, scan what you find, question the ' +\n    'suspects, then make your accusation.',\n  rooms: {\n    library: {\n      name: 'The Library',\n      requires: null,\n      suspect: 'niece',\n      desc: 'Floor-to-ceiling shelves, a dying fire, and the smell of old paper. A chair is pulled out as though someone left in a hurry.',\n      url: \"library.png\"\n    },\n    kitchen: {\n      name: 'The Kitchen',\n      requires: null,\n      suspect: 'cook',\n      desc: 'Copper pans hang over a scrubbed table. A tea tray sits half-prepared by the stove.',\n      url: \"kitchen.png\"\n    },\n    greenhouse: {\n      name: 'The Greenhouse',\n      requires: null,\n      suspect: 'gardener',\n      desc: 'Warm, damp and overgrown. Tall purple flowers crowd one bench; the soil there has been freshly disturbed.',\n      url: \"greenhouse.png\"\n    },\n    cellar: {\n      name: 'The Wine Cellar',\n      requires: 'cellar-key',\n      url: \"cellar.png\",\n      suspect: 'butler',\n      desc: 'Cold air and rows of dusty racks. Many of the shelves are strangely empty.',\n      locked:\n        'The cellar door is bolted shut with a heavy brass lock. There is no way through without a key. Somebody in this house must keep one...',\n    },\n  },\n  suspects: {\n    niece: {\n      name: 'Vivian Ashworth',\n      role: 'The Niece',\n      url: \"niece.png\",\n      statement:\n        'I was in the library all evening. Uncle and I argued at supper, yes, but I never touched his tea.',\n    },\n    cook: {\n      name: 'Mrs. Penhallow',\n      role: 'The Cook',\n      url: \"cook.png\",\n      statement:\n        'I cleared the kitchen at ten and went straight to bed. Anyone in this house could have touched that tea tray.',\n    },\n    gardener: {\n      name: 'Mr. Thorne',\n      role: 'The Gardener',\n      url: \"gardener.png\",\n      statement:\n        'Repotting in the greenhouse until midnight, I was. I know every plant in it, and I would never harm a living soul.',\n    },\n    butler: {\n      name: 'Henry Crane',\n      role: 'The Butler',\n      url: \"butler.png\",\n      statement:\n        'I was down in the cellar rotating the stock. His Lordship was perfectly well when I last saw him at nine.',\n    },\n  },\n  items: {\n    'torn-letter': {\n      room: 'library',\n      url: \"letter.png\",\n      name: 'A torn letter',\n      text: 'A letter in Lord Ashworth’s hand, torn in half: “...I have proof that someone in this household has been selling my cellar and pocketing the money. On Friday I will change my will and call in the auditors...”',\n    },\n    ledger: {\n      room: 'library',\n      url: \"ledger.png\",\n      name: 'The cellar ledger',\n      text: 'Forty-one vintages written off as “spoiled” this year. Every write-off was countersigned by whoever holds the cellar keys.',\n    },\n    'cellar-key': {\n      room: 'kitchen',\n      name: 'A brass key',\n      url: \"key.png\",\n      text: 'A brass key tagged CELLAR – SPARE. A note in Lord Ashworth’s writing is tied to it: “The other is kept by the butler.”',\n    },\n    teacup: {\n      room: 'kitchen',\n      url: \"teacup.png\",\n      name: 'His Lordship’s teacup',\n      text: 'The dregs smell faintly bitter. Foxglove. Someone put digitalis in the tea.',\n    },\n    gloves: {\n      room: 'greenhouse',\n      url: \"gloves.png\",\n      name: 'A pair of leather gloves',\n      text: 'Far too fine for gardening, and stained green with foxglove sap. Inside the cuff is a monogram: H.C.',\n    },\n    codicil: {\n      room: 'cellar',\n      url: \"codicil.png\",\n      name: 'An unsigned codicil',\n      text: 'Hidden behind a loose crate: Ashworth’s new will. It dismisses the butler without pension and orders a full audit of the cellar. It was never signed.',\n    },\n  },\n};\n\nconst CODENAMES = ['Inspector Fox', 'Detective Wren', 'Sleuth Magpie', 'Constable Heron', 'Agent Raven', 'Sergeant Otter', 'Miss Marple-ish', 'Inspector Badger'];\n\n// ───────────────────────── STATE ─────────────────────────\nconst req = $('Parse Request').first().json;\nconst row = $input.first().json || {};\nconst q = req.query || {};\nconst now = Date.now();\n\nconst player = {\n  pid: req.pid,\n  codename: row.codename || CODENAMES[Math.floor(Math.random() * CODENAMES.length)] + ' #' + (10 + Math.floor(Math.random() * 90)),\n  found: row.found || '',\n  visited: row.visited || '',\n  started_at: row.started_at || new Date(now).toISOString(),\n  finished_at: row.finished_at || '',\n  wrong: Number(row.wrong) || 0,\n  score: Number(row.score) || 0,\n};\n\nconst found = new Set(player.found.split(',').filter(Boolean));\nconst visited = new Set(player.visited.split(',').filter(Boolean));\nconst solved = !!player.finished_at;\n\nconst esc = (s) => String(s).replace(/[&<>\"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;' }[c]));\nconst roomUnlocked = (id) => !GAME.rooms[id].requires || found.has(GAME.rooms[id].requires);\nconst itemsIn = (roomId) => Object.entries(GAME.items).filter(([, it]) => it.room === roomId);\nconst totalItems = Object.keys(GAME.items).length;\n\n// Build a full image URL from BASE_URL + obj.url\nconst assetUrl = (u) => {\n  if (!u) return '';\n  let full = /^https?:\\/\\//.test(u) ? u : BASE_URL.replace(/\\/?$/, '/') + u.replace(/^\\//, '');\n  // github.com/.../blob/... serves an HTML page, so ask for the raw file instead\n  if (/github\\.com\\/.+\\/blob\\//.test(full) && !full.includes('?')) full += '?raw=true';\n  return full;\n};\n// Render an <img> only if the object has a url property\nconst img = (obj, cls = 'pic') =>\n  obj && obj.url ? `<img class=\"${cls}\" src=\"${esc(assetUrl(obj.url))}\" alt=\"${esc(obj.name || '')}\" loading=\"lazy\">` : '';\n\n// ───────────────────────── VIEW ─────────────────────────\nconst page = (inner) => `<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>${esc(GAME.title)}</title>\n<style>\n  :root{--bg:#14110f;--card:#211c18;--ink:#eadfcf;--muted:#9a8f80;--gold:#c9a227;--red:#b3392f;--green:#4d8f5f}\n  *{box-sizing:border-box}\n  body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 Georgia,'Times New Roman',serif}\n  .wrap{max-width:560px;margin:0 auto;padding:20px 16px 48px}\n  .bar{display:flex;justify-content:space-between;gap:8px;font:13px system-ui,sans-serif;color:var(--muted);border-bottom:1px solid #3a322b;padding-bottom:10px;margin-bottom:18px}\n  h1,h2,h3{font-weight:normal;color:var(--gold);margin:.2em 0 .4em}\n  h1{font-size:30px}h2{font-size:24px}h3{font-size:18px}\n  .card{background:var(--card);border:1px solid #3a322b;border-radius:10px;padding:14px 16px;margin:14px 0;overflow:hidden}\n  .quote{font-style:italic}\n  .muted{color:var(--muted);font-size:14px}\n  .ok{color:var(--green)}.bad{color:var(--red)}\n  a.btn{display:block;text-align:center;text-decoration:none;background:var(--gold);color:#14110f;padding:13px;border-radius:8px;font:600 16px system-ui,sans-serif;margin:10px 0}\n  a.btn.alt{background:transparent;color:var(--gold);border:1px solid var(--gold)}\n  a.btn.red{background:var(--red);color:#fff}\n  ul{padding-left:20px}li{margin:6px 0}\n  img.pic{display:block;width:100%;height:auto;border-radius:8px;border:1px solid #3a322b;margin:10px 0}\n  img.portrait{float:right;width:96px;height:96px;object-fit:cover;border-radius:50%;border:2px solid var(--gold);margin:0 0 8px 12px}\n  img.thumb{display:block;width:100%;max-width:220px;height:auto;border-radius:6px;margin:6px 0}\n</style></head><body><div class=\"wrap\">\n<div class=\"bar\"><span>${esc(player.codename)}</span><span>Clues ${found.size}/${totalItems} · Rooms ${visited.size}/${Object.keys(GAME.rooms).length}</span></div>\n${inner}\n</div></body></html>`;\n\nconst notebook = () => {\n  if (!found.size) return '<p class=\"muted\">Your notebook is empty. Find a QR code in the manor.</p>';\n  return '<ul>' + [...found].map((id) => `<li><strong>${esc(GAME.items[id].name)}</strong> <span class=\"muted\">(${esc(GAME.rooms[GAME.items[id].room].name)})</span>${img(GAME.items[id], 'thumb')}${esc(GAME.items[id].text)}</li>`).join('') + '</ul>';\n};\n\nconst lockedView = (roomId) => `\n  <h2>🔒 ${esc(GAME.rooms[roomId].name)}</h2>\n  <div class=\"card\"><p>${esc(GAME.rooms[roomId].locked || 'This room is locked.')}</p></div>\n  <a class=\"btn alt\" href=\"?\">Back to my case file</a>`;\n\nlet body = '';\n\nif (q.room && GAME.rooms[q.room]) {\n  // ───── ROOM SCAN ─────\n  const id = q.room;\n  const room = GAME.rooms[id];\n  if (!roomUnlocked(id)) {\n    body = lockedView(id);\n  } else {\n    visited.add(id);\n    const s = GAME.suspects[room.suspect];\n    const here = itemsIn(id);\n    const foundHere = here.filter(([k]) => found.has(k));\n    const missing = here.length - foundHere.length;\n    body = `\n      <h2>${esc(room.name)}</h2>\n      ${img(room)}\n      <p>${esc(room.desc)}</p>\n      <div class=\"card\">\n        ${img(s, 'portrait')}\n        <h3>${esc(s.name)} <span class=\"muted\">– ${esc(s.role)}</span></h3>\n        <p class=\"quote\">“${esc(s.statement)}”</p>\n      </div>\n      <p>${missing > 0\n        ? `There ${missing === 1 ? 'is 1 thing' : 'are ' + missing + ' things'} in this room you haven’t found yet. Look around for a QR code.`\n        : '<span class=\"ok\">You’ve found everything in this room.</span>'}</p>\n      ${foundHere.length ? '<h3>Found here</h3><ul>' + foundHere.map(([, it]) => `<li><strong>${esc(it.name)}</strong>: ${esc(it.text)}${img(it, 'thumb')}</li>`).join('') + '</ul>' : ''}\n      <a class=\"btn alt\" href=\"?\">My case file</a>`;\n  }\n} else if (q.item && GAME.items[q.item]) {\n  // ───── ITEM SCAN ─────\n  const id = q.item;\n  const it = GAME.items[id];\n  if (!roomUnlocked(it.room)) {\n    body = lockedView(it.room);\n  } else {\n    visited.add(it.room);\n    const isNew = !found.has(id);\n    found.add(id);\n    const unlocks = Object.entries(GAME.rooms).filter(([, r]) => r.requires === id).map(([, r]) => r.name);\n    body = `\n      <h2>${isNew ? 'Clue found!' : 'Already in your notebook'}</h2>\n      <div class=\"card\"><h3>${esc(it.name)}</h3>${img(it)}<p>${esc(it.text)}</p></div>\n      ${isNew && unlocks.length ? `<p class=\"ok\"><strong>New location unlocked:</strong> ${esc(unlocks.join(', '))}</p>` : ''}\n      <p class=\"muted\">${found.size} of ${totalItems} clues collected.</p>\n      <a class=\"btn alt\" href=\"?\">My case file</a>`;\n  }\n} else if (q.accuse !== undefined) {\n  // ───── ACCUSATION ─────\n  const guess = q.accuse;\n  if (solved) {\n    body = `<h2>Case closed</h2><div class=\"card\"><p class=\"ok\">You already solved this one. Final score: <strong>${player.score}</strong>.</p></div><a class=\"btn alt\" href=\"?\">My case file</a>`;\n  } else if (GAME.suspects[guess]) {\n    if (guess === GAME.killer) {\n      const elapsed = Math.round((now - new Date(player.started_at).getTime()) / 1000);\n      player.finished_at = new Date(now).toISOString();\n      player.score = Math.max(0, Math.round(1200 - elapsed / 2 - player.wrong * 150));\n      const k = GAME.suspects[guess];\n      body = `\n        <h2>🎉 Case solved!</h2>\n        <div class=\"card\">\n          ${img(k, 'portrait')}\n          <p><strong>${esc(k.name)}</strong> did it. Cornered by the evidence, the butler confesses: the cellar was being quietly sold off, and Lord Ashworth was about to call in the auditors.</p>\n          <p>Time: <strong>${Math.floor(elapsed / 60)}m ${elapsed % 60}s</strong> · Wrong accusations: <strong>${player.wrong}</strong></p>\n          <p>Score: <strong>${player.score}</strong></p>\n        </div>\n        <p class=\"muted\">Show this screen at the booth to claim your prize.</p>`;\n    } else {\n      player.wrong += 1;\n      body = `\n        <h2 class=\"bad\">Not quite...</h2>\n        <div class=\"card\"><p>${esc(GAME.suspects[guess].name)} has an answer for everything, and your accusation falls flat. (-150 points)</p></div>\n        <a class=\"btn\" href=\"?accuse\">Try again</a><a class=\"btn alt\" href=\"?\">Back to my case file</a>`;\n    }\n  } else {\n    body = `\n      <h2>Make your accusation</h2>\n      <p class=\"muted\">Careful: each wrong accusation costs you points.</p>\n      ${Object.entries(GAME.suspects).map(([id, s]) => `<a class=\"btn red\" href=\"?accuse=${id}\">${esc(s.name)} <span style=\"opacity:.8\">– ${esc(s.role)}</span></a>`).join('')}\n      <a class=\"btn alt\" href=\"?\">Not yet, back to my case file</a>`;\n  }\n} else {\n  // ───── LOBBY / CASE FILE ─────\n  const fresh = !visited.size && !found.size;\n  body = `\n    <h1>${esc(GAME.title)}</h1>\n    ${fresh ? `<p>${esc(GAME.intro)}</p><p>Scan a room’s QR code to step inside.</p>` : '<h3>Your case file</h3>' + notebook()}\n    ${visited.size ? '<h3>Rooms visited</h3><ul>' + [...visited].map((id) => `<li><a style=\"color:var(--gold)\" href=\"?room=${id}\">${esc(GAME.rooms[id].name)}</a></li>`).join('') + '</ul>' : ''}\n    ${found.size >= 3 ? '<a class=\"btn red\" href=\"?accuse\">I know who did it</a>' : ''}`;\n}\n\n// ───────────────────────── OUTPUT ─────────────────────────\nreturn {\n  html: page(body),\n  player: {\n    pid: player.pid,\n    codename: player.codename,\n    found: [...found].join(','),\n    visited: [...visited].join(','),\n    started_at: player.started_at,\n    finished_at: player.finished_at,\n    wrong: player.wrong,\n    score: player.score,\n  },\n};\n})() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1200,
+        -80
+      ],
+      "id": "12abed07-9a28-456f-b70c-91f4915e165e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const html = `<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>Blackwood Manor</title>\n  <style>\n    body {\n      margin: 0;\n      min-height: 100vh;\n      display: flex;\n      flex-direction: column;\n      align-items: center;\n      justify-content: center;\n      gap: 24px;\n      background: #0b0b0f;\n      font-family: Georgia, serif;\n    }\n    img {\n      max-width: 90%;\n      max-height: 75vh;\n      border-radius: 8px;\n      box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);\n    }\n    a {\n      color: #e8d9b5;\n      font-size: 1.5rem;\n      text-decoration: none;\n      padding: 12px 28px;\n      border: 1px solid #e8d9b5;\n      border-radius: 4px;\n    }\n    a:hover {\n      background: #e8d9b5;\n      color: #0b0b0f;\n    }\n  </style>\n</head>\n<body>\n  <img src=\"https://raw.githubusercontent.com/softchris/blackwood-manor/main/large/manor.png\" alt=\"Blackwood Manor\">\n  <a href=\"https://internal.users.n8n.cloud/webhook/mansion\">Step into the manor</a>\n</body>\n</html>`;\n\nreturn [{ json: { html } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        752,
+        304
+      ],
+      "id": "a8ea66e5-b8ea-428d-ad99-a7755908d7ea",
+      "name": "Code in JavaScript",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.html }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        992,
+        304
+      ],
+      "id": "38787898-aa99-4884-8f6f-e978264fd8f2",
+      "name": "RespondIntroPage"
+    },
+    {
+      "parameters": {
+        "path": "mansion",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        544,
+        128
+      ],
+      "id": "ea53721f-f5a1-42dd-828b-e89131ea3a3a",
+      "name": "Game loop",
+      "webhookId": "7c2d9a54-3b0e-4f6a-9d1e-0b6a1f3c8e21"
+    },
+    {
+      "parameters": {
+        "path": "ddc8d0e1-efe2-40ad-9cc2-459471d7f30b",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        528,
+        304
+      ],
+      "id": "c4e1223e-8e8a-46ac-8fe7-1567b4e61c98",
+      "name": "Intro page",
+      "webhookId": "ddc8d0e1-efe2-40ad-9cc2-459471d7f30b"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1056,
+        -288
+      ],
+      "id": "fa91897f-1f2e-429f-baf2-27c7fd150f13",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5.1-codex",
+          "mode": "list",
+          "cachedResultName": "gpt-5.1-codex"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        528,
+        -32
+      ],
+      "id": "d0d89c23-0ce5-4004-a9ee-818f1c323ea5",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "BrJItQqLUJJ5IwhI",
+          "name": "Global OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1456,
+        -288
+      ],
+      "id": "fcd8af0d-4111-45f9-9d66-4f1f30d7bc09",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "407a84bb-21ea-4883-bcf7-742a8f6b7f4d",
+              "name": "message",
+              "value": "hello",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        768,
+        -288
+      ],
+      "id": "cdae0c9e-0941-452e-942c-fc665c87cc75",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        544,
+        -288
+      ],
+      "id": "5de559c8-12ae-4cb7-8c53-c8d942c969be",
+      "name": "When clicking ‘Execute workflow’",
+      "alwaysOutputData": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Parse Request": {
+      "main": [
+        [
+          {
+            "node": "Get Player",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Player": {
+      "main": [
+        [
+          {
+            "node": "Game Logic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Game Logic": {
+      "main": [
+        [
+          {
+            "node": "Save Player",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Player": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "RespondIntroPage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond": {
+      "main": [
+        []
+      ]
+    },
+    "Game loop": {
+      "main": [
+        [
+          {
+            "node": "Parse Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Intro page": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "98be6d0a-e404-458c-bc1c-82a323eaefcd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb484ba7b742928a2048bf8829668bed5b5ad9787579adea888f05980292a4a7"
+  },
+  "nodeGroups": [],
+  "id": "rUNotBYcWllssUmN",
+  "tags": []
+}
