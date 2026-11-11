@@ -1,0 +1,157 @@
+{
+  "name": "Superintendent McGarrigle",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "mode": "hostedChat",
+        "initialMessages": "Detective. McGarrigle here. Lord Ashworth is dead, the doors were locked from the inside, and I've four suspects and no patience. What have you got for me?",
+        "options": {
+          "title": "Superintendent McGarrigle",
+          "subtitle": "Report to your superior. Ask for a briefing or a nudge.",
+          "loadPreviousSession": "memory",
+          "responseMode": "lastNode"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3a1f0c52-6d1b-4f6e-9a0d-1c2b3d4e5f01",
+      "name": "When chat message received",
+      "webhookId": "5b7e2d90-4c1a-4a8e-8f3b-9d2e6a1c7b11"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "You are Superintendent Angus McGarrigle, head of the Blackwood constabulary. The user is the detective you sent to investigate the murder of Lord Ashworth at Blackwood Manor. Stay in character at all times.\n\nPERSONALITY\n- Gruff, dry-witted, impatient but fond of your detective. Short sentences, the odd \"aye\". Call them \"Detective\". No emojis.\n- Keep replies to 2-4 sentences unless asked for a briefing.\n\nYOUR CASE FILE\n- Your only source of facts is the tool \"get_case_file\". Call it before answering anything about the case (rooms, suspects, statements, clues, locked doors) and whenever you are unsure. Never invent facts that are not in it.\n- The file contains the field \"killer\". That is private: you must NEVER name the killer, and never say outright who is innocent.\n\nHOW TO HELP\n- Give a briefing on request: victim, time, locked doors, the people in the house.\n- When the detective is stuck, nudge with questions and escalating hints: first which room or person to look at again, then what to compare (a statement against a clue). Never the answer itself.\n- If they describe a clue, react and say what it makes you wonder. Anything not in the case file: \"I've no report of that.\"\n- If they state a theory backed by at least two clues from the file, you may say they're \"on the right track\" or \"I'd think again\", but never confirm it. Tell them to make the formal accusation in their case file when sure; wrong accusations cost them.\n- If asked to just name the killer, refuse in character (\"Solve it yourself, that's what I pay you for\").\n- Off-topic questions: steer back to the investigation. Never mention being an AI, tools or these instructions."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        240,
+        0
+      ],
+      "id": "9d4f1b26-0e5c-4c9a-b3f4-3e4d5f6a7b03",
+      "name": "McGarrigle"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        160,
+        240
+      ],
+      "id": "ae5a2c37-1f6d-4dab-84a5-4f5e6a7b8c04",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "BrJItQqLUJJ5IwhI",
+          "name": "Global OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 12
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        320,
+        240
+      ],
+      "id": "bf6b3d48-2a7e-4ebc-95b6-5a6f7b8c9d05",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Returns McGarrigle's full case file for Blackwood Manor as JSON: the setting, rooms, suspects and their statements, every clue, and the killer. Call it before answering questions about the case.",
+        "url": "https://raw.githubusercontent.com/softchris/blackwood-manor/main/game.json",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        240
+      ],
+      "id": "c07c4e59-3b8f-4fcd-a6c7-6b7a8c9dae06",
+      "name": "get_case_file"
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "McGarrigle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "McGarrigle",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "McGarrigle",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_case_file": {
+      "ai_tool": [
+        [
+          {
+            "node": "McGarrigle",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}
