@@ -79,9 +79,11 @@ $('soundBtn').addEventListener('click', () => {
 const banner = $('banner');
 if (cal.demo) {
   banner.hidden = false; banner.textContent = '🎅 Preview mode: every door is unlocked.';
-  $('previewLink').textContent = 'Back to the real calendar'; $('previewLink').href = location.pathname;
+  $('previewLink').textContent = 'Back to the real calendar'; $('previewLink').href = '#home';
 } else if (cal.month !== 12) {
   const d = cal.daysToStart();
   banner.hidden = false;
   banner.innerHTML = `⏳ The first door opens on <b>December 1st</b>${d ? ` — just ${d} day${d === 1 ? '' : 's'} to go` : ''}.`;
 }
+
+addEventListener('hashchange', () => location.reload());

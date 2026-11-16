@@ -9,7 +9,7 @@ const store = {
 
 export function createCalendar(root, { onOpen, onLocked }) {
   const params = new URLSearchParams(location.search);
-  const demo = params.get('demo') === '1';
+  const demo = params.get('demo') === '1' || location.hash === '#demo';
   // ?today=12-07 pretends it is that date (handy for testing)
   const fake = (params.get('today') || '').match(/^(\d{1,2})-(\d{1,2})$/);
   const now = new Date();

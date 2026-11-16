@@ -9,7 +9,7 @@ cd advent && python3 -m http.server 8123   # then open http://localhost:8123
 ```
 
 ## URL options
-- `?demo=1` unlocks every door (preview)
+- `?demo=1` or `#demo` unlocks every door (preview)
 - `?today=12-07` pretends it is that date
 
 Doors unlock on their real December date. Progress is saved in `localStorage`.
